@@ -35,7 +35,7 @@
 ## 2. 순서도
 
 <details>
-<summary>순서도 없음</summary>
+<summary>추후 추가 예정</summary>
 
 ## </details>
 
@@ -58,6 +58,8 @@
 ### **2023.05.09.(화)**
 
 **개인공부**
+- Error handling
+- 
 
 ### **2023.05.11.(목)**
 
@@ -79,7 +81,7 @@
 
 ## 4. 실행 화면(기능 설명)
 
-**실행 화면 없음**
+**추후 추가 예정**
 
 ---
 
@@ -89,13 +91,15 @@
 
 ## 5. 트러블 슈팅
 
-### 🔥유지보수성과 확장성의 문제
+### 유지보수성과 확장성의 문제
+
+**🔥문제점**
 
 - 초기에 `Fruit`를 name과 stock을 프로퍼티로 가진 구조체로 작성했으나, 추후 과일이 추가되는 경우 타입 수정은 물론 `FruitsStore`의 코드도 수정해야하는 확장성이 떨어지는 코드였습니다.
 - 그리고 `Juice`는 타입을 따로 만들지 않고 String을 case 별로 나누는 코드로 작성하였으나, 위와 같이 확장성이 떨어지는 코드였습니다.
 
 <details>
-<summary>세부 사항</summary>
+<summary>본문 코드 내용</summary>
 
 ### Fruit 구조체
 
@@ -152,13 +156,13 @@ func makeJuice(_ juice: String) throws {
 
 </details>
 
-### 🧯해결방안
+**🧯해결방안**
 
 - `Fruit`를 열거형으로 수정하고, 재고는 `FruitsStore`에 `FruitStock` 딕셔너리를 만들어 추후 과일이 추가되어도 `Fruit`타입만 관리해도 되는 코드로 수정하였습니다.
 - `Juice`도 열거형으로 만들고 케이스별로 필요한 재료를 반환해주는 있는 `ingredients` 프로퍼티를 만들어 추후 유지보수 관련하여 유용하도록 코드를 수정하였습니다.
 
 <details>
-<summary>세부 사항</summary>
+<summary>본문 코드 내용</summary>
 
 ### Fruit 코드
 
@@ -207,13 +211,15 @@ enum Juice {
 
 </details>
 
-### 🔥에러처리
+### 에러처리
+
+**🔥문제점**
 
 - throw, do-catch문으로 에러 처리를 할 때 `makeJuice()`가 아닌 `printError()` 내에서 따로 에러를 처리하여, 에러만 출력하는 것 처럼 보이는 문제가 있었습니다.
 - 초기 에러타입의 이름이 InputError로 어디서 발생하는 에러인지 인지하기 힘든 네이밍이었습니다.
 
 <details>
-<summary>세부 사항</summary>
+<summary>본문 코드 내용</summary>
 
 ### printError 코드
 
@@ -242,13 +248,13 @@ enum InputError: Error {
 
 </details>
 
-### 🧯해결방안
+**🧯해결방안**
 
 - do-catch문을 `makeJuice()`내에서 처리하여 쥬스가 만들어질 때 발생하는 에러를 처리하도록 하였습니다.
 - 에러 타입을 `JuiceMakerError`로 리네임하고 케이스 별로 이름도 세분화하였습니다. 
 
 <details>
-<summary>세부 사항</summary>
+<summary>본문 코드 내용</summary>
 
 ### makeJuice 코드
 
