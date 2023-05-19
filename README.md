@@ -116,8 +116,6 @@
 <details>
 <summary>본문 코드 내용</summary>
 
-### @IBAction func
-
 ```swift
 @IBAction func strawberrybananaJuiceOrderButton(_ sender: UIButton) {
     orderJuice(.strawberryBananaJuice
@@ -140,8 +138,6 @@
 
 <details>
 <summary>본문 코드 내용</summary>
-
-### @IBAction func
 
 ```swift
 @IBAction private func orderJuiceButtonTap(_ sender: UIButton) {
@@ -181,8 +177,6 @@
 <details>
 <summary>본문 코드 내용</summary>
 
-### 
-
 ```swift
 func bringStock(_ fruit: Fruit) -> Int {
     guard let stock = fruitsStock[fruit] else { fatalError("과일이 없습니다.") }
@@ -201,8 +195,6 @@ func bringStock(_ fruit: Fruit) -> Int {
 
 <details>
 <summary>본문 코드 내용</summary>
-
-### 
 
 ```swift
 func bringStock(_ fruit: Fruit) -> Int {
@@ -224,6 +216,8 @@ func bringStock(_ fruit: Fruit) -> Int {
 
 [Apple-pushViewController](https://developer.apple.com/documentation/uikit/uinavigationcontroller/1621887-pushviewcontroller)
 [Apple-FatalError](https://developer.apple.com/documentation/swift/fatalerror(_:file:line:))
+[Apple-currentTitle](https://developer.apple.com/documentation/uikit/uibutton/1624032-currenttitle)
+[Apple-instantiateViewController(withIdentifier:)](https://developer.apple.com/documentation/uikit/uistoryboard/1616214-instantiateviewcontroller)
 
 [블로그-화면전환](https://velog.io/@5n_tak/Swift-ViewController-%ED%99%94%EB%A9%B4%EC%A0%84%ED%99%98-%EB%B0%A9%EB%B2%95)
 [블로그-FatalError](https://gwangyonglee.tistory.com/52)
