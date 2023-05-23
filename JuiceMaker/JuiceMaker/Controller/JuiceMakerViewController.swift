@@ -52,11 +52,11 @@ final class JuiceMakerViewController: UIViewController {
     }
     
     private func setText() {
-        strawberryStockLabel.text = String(juiceMaker.fruitStore.bringStock(.strawberry))
-        bananaStockLabel.text = String(juiceMaker.fruitStore.bringStock(.banana))
-        pineappleStockLabel.text = String(juiceMaker.fruitStore.bringStock(.pineapple))
-        kiwiStockLabel.text = String(juiceMaker.fruitStore.bringStock(.kiwi))
-        mangoStockLabel.text = String(juiceMaker.fruitStore.bringStock(.mango))
+        strawberryStockLabel.text = String(juiceMaker.bringStock(.strawberry))
+        bananaStockLabel.text = String(juiceMaker.bringStock(.banana))
+        pineappleStockLabel.text = String(juiceMaker.bringStock(.pineapple))
+        kiwiStockLabel.text = String(juiceMaker.bringStock(.kiwi))
+        mangoStockLabel.text = String(juiceMaker.bringStock(.mango))
     }
     
     private func orderJuice(_ juice: Juice) {
@@ -77,7 +77,7 @@ final class JuiceMakerViewController: UIViewController {
             print("해당 뷰컨트롤러ID를 가진 뷰컨트롤러가 스토리보드에 없습니다.")
             return
         }
-        pushViewController.fruitStore = juiceMaker.fruitStore
+        pushViewController.fruitStore = juiceMaker.bringFruitStore()
         pushViewController.delegate = self
         self.navigationController?.pushViewController(pushViewController, animated: true)
     }
@@ -98,7 +98,7 @@ final class JuiceMakerViewController: UIViewController {
 
 extension JuiceMakerViewController: ChangeStockDelegate {
     func changeStock(fruitStore: FruitStore) {
-        self.juiceMaker.fruitStore = fruitStore
+        self.juiceMaker.update(fruitStore)
         setText()
     }
 }
