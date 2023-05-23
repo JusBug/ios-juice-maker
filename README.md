@@ -37,7 +37,9 @@
 <details>
 <summary>추후 추가 예정</summary>
 
-## </details>
+![](https://hackmd.io/_uploads/SJPYz19r3.png)
+    
+</details>
 
 </br>
 
@@ -49,33 +51,33 @@
 
 ### 2023.05.15.(월)
 
-**storyboard, ViewController 세팅**
+**ViewController, View 세팅**
+- `ChangeStockViewController` 생성 및 레이아웃 세팅
+- `ChangeStockViewController`와 view객체 연결
+    -  `Stepper`의 `tag` 설정
+- `UIViewController`를 확장하여 alert를 만들어 반환하는 `makeAlertMessage()` 생성
 
-- storyboard의 레이블과 버튼을 ViewController에 연결
-- storyboard 내에 ViewController의 StoryboardID 설정
-
-**JuiceMakerViewController 구현**
-- `pushViewController`로 화면 전환 구현
-- `JuiceMaker.FruitStore.bringStock()`로 재고를 가져와 `stocklabel.text`에 값을 할당해주는 composeText() 생성
-- 성공, 실패 알림 창을 띄어주는 `popUpFailMessage()`, `popUpSuccessMessage()` 생성
-- `button.currentTitle`을 사용하여 `orderJuiceButtonTap()` 하나로 버튼 액션을 처리
+**ViewController간의 데이터 전달**
+- `JuiceMakerViewController` -> `ChangeStockViewController`의 데이터 전달은 프로퍼티를 사용하여 구현
+- `ChangeStockViewController` -> `JuiceMakerViewController`의 데이터 전달은 `Delegate`를 사용하여 구현
+    - `ChangeStockDelegate` 프로토콜 생성
 
 ### **2023.05.16.(화)**
 
 **리뷰 확인 및 코드 수정**
-
-- 함수 네이밍 수정 및 은닉화 설정
+- 네이밍 수정
+    - 버튼 액션 네임에서 `tap`을 접두사로 사용
+    - `ChangeStockProtocol`에서 `ChangeStockDelegate`로 리네임
+    - `compose`를 `set`으로 통일
+- `JuiceMakerViewController`가 `ChangeStockDelegate`를 채택하는 코드는 extension으로 확장하여 구현
 
 ### **2023.05.18.(목)**
 
-**리뷰확인 및 코드 수정**
-
-- 함수 네이밍 수정
-- `fatalError()`를 모두 제거하고 `return`으로 처리
+- 
 
 ### **2023.05.19.(금)**
 
-- `README` 작성
+- 
 
 ---
 
@@ -101,33 +103,59 @@
 | :--------: |
 | <Img src = "https://hackmd.io/_uploads/Sy3WN7mHh.gif" width="600"/> |
 
+| 쥬스 만들기 화면에서 재고변경 화면으로 재고 데이터 전달 |
+| :--------: |
+| <Img src = "https://hackmd.io/_uploads/S1G4eJ9Hh.gif" width="600"/> |
+
+| stepper를 이용한 재고 변경 |
+| :--------: |
+| <Img src = "https://hackmd.io/_uploads/BkCOlJcr2.gif" width="600"/> |
+
+| 재고변경 화면에서 쥬스 만들기 화면으로 변경된 재고 데이터 전달 |
+| :--------: |
+| <Img src = "https://hackmd.io/_uploads/Hkhje19Hn.gif" width="600"/> |
+
 </br>
 
 <a id="5."></a>
 
 ## 5. 트러블 슈팅
 
-### 재사용성
+### 모델과 원시값의 연관성 문제
 
 **🔥문제점**
-
-- 버튼 하나하나에 `@IBAction func`을 생성하였더니 버튼의 갯수만큼 함수가 필요하여 재사용성이 떨어지는 문제가 있었습니다.
+- `tag`나 `currentTitle`을 이용하여 `Juice`와 `Fruit` 모델에 쉽게 접근하기 위해 Int, String 원시값을 사용했습니다.
+- 하지만 `tag`나 `currentTitle`은 View의 정보이기 때문에 모델이 이를 원시값으로 가지고 있는 것은 연관성을 찾기 어려웠습니다.
 
 <details>
 <summary>본문 코드 내용</summary>
 
-### @IBAction func
-
+**Fruit 코드**
+    
 ```swift
-@IBAction func strawberrybananaJuiceOrderButton(_ sender: UIButton) {
-    orderJuice(.strawberryBananaJuice
+enum Fruit: Int, CaseIterable {
+    case strawberry
+    case banana
+    case pineapple
+    case kiwi
+    case mango
 }
+```
     
-@IBAction func mangokiwiJuiceOrderButton(_ sender: UIButton) {
-    orderJuice(.mangoKiwiJuice)
+**Juice 코드**
+    
+```swift
+enum Juice: String {
+    case strawberryJuice = "딸기쥬스 주문"
+    case bananaJuice = "바나나쥬스 주문"
+    case pineappleJuice = "파인애플쥬스 주문"
+    case kiwiJuice = "키위쥬스 주문"
+    case mangoJuice = "망고쥬스 주문"
+    case strawberryBananaJuice = "딸바쥬스 주문"
+    case mangoKiwiJuice = "망키쥬스 주문"
+    
+    // ...
 }
-    
-// ...
 ```
 
 </details>
@@ -135,59 +163,111 @@
 </br>
 
 **🧯해결방안**
-- 버튼의 `.currentTitle`을 사용하여 switch문으로 분기처리하여 하나의 `@IBAction func`으로 모든 버튼 액션을 처리하였습니다.
+- Model에 원시값으로 접근하기 보단 ViewController에서 `tag`와 `currentTitle`로 분기처리하였습니다.
 
 
 <details>
 <summary>본문 코드 내용</summary>
 
-### @IBAction func
-
+**changeStockStepper() 코드**
 ```swift
-@IBAction private func orderJuiceButtonTap(_ sender: UIButton) {
-        guard let title = sender.currentTitle else { print("버튼이 설정되지 않았습니다."); return }
+@IBAction private func changeStockStepper(_ sender: UIStepper) {
+    let amount = Int(sender.value)
         
-        switch title {
-        case "딸기쥬스 주문":
-            orderJuice(.strawberryJuice)
-        case "바나나쥬스 주문":
-            orderJuice(.bananaJuice)
-        case "파인애플쥬스 주문":
-            orderJuice(.pineappleJuice)
-        case "키위쥬스 주문":
-            orderJuice(.kiwiJuice)
-        case "망고쥬스 주문":
-            orderJuice(.mangoJuice)
-        case "딸바쥬스 주문":
-            orderJuice(.strawberryBananaJuice)
-        case "망키쥬스 주문":
-            orderJuice(.mangoKiwiJuice)
-        default:
-            break
-        }
+    switch sender.tag {
+    case 0:
+        fruitStore.changeStock(amount, to: .strawberry)
+    case 1:
+        fruitStore.changeStock(amount, to: .banana)
+    case 2:
+        fruitStore.changeStock(amount, to: .pineapple)
+    case 3:
+        fruitStore.changeStock(amount, to: .kiwi)
+    case 4:
+        fruitStore.changeStock(amount, to: .mango)
+    default:
+        return
     }
+        
+    // ...
+}
 ```
-
+    
+**tapOrderJuiceButton() 코드**
+    
+```swift
+@IBAction private func tapOrderJuiceButton(_ sender: UIButton) {
+    guard let title = sender.currentTitle else {
+        print("버튼이 설정되지 않았습니다.")
+        return
+    }
+        
+    switch title {
+    case "딸기쥬스 주문":
+        orderJuice(.strawberryJuice)
+    case "바나나쥬스 주문":
+        orderJuice(.bananaJuice)
+    case "파인애플쥬스 주문":
+        orderJuice(.pineappleJuice)
+    case "키위쥬스 주문":
+        orderJuice(.kiwiJuice)
+    case "망고쥬스 주문":
+        orderJuice(.mangoJuice)
+    case "딸바쥬스 주문":
+        orderJuice(.strawberryBananaJuice)
+    case "망키쥬스 주문":
+        orderJuice(.mangoKiwiJuice)
+    default:
+        break
+    }
+}
+```
+    
 </details>
 
 </br>
 
-### fatalError
+### Singleton의 문제점
 
 **🔥문제점**
 
-- do-catch문을 사용하지 않아도 되는 에러는 `fatalError`를 사용하여 에러처리를 하였지만 의도치 않게 앱이 종료될 수도 있는 위험성이 있었습니다.
+- 어느 클래스에서든 하나의 인스턴스에 접근하는 것이기 때문에 의존성과 결합도가 높아져 개방폐쇄 원칙(OCP)에 위배되고 추후 유지보수 측면에서도 복잡해질 수 있습니다.
+- 멀티 스레드 환경에서 객체가 중복생성될 우려가 있어 적시적소에 동기화 처리를 해주어야 하는 번거로움이 발생합니다.
 
 <details>
 <summary>본문 코드 내용</summary>
 
-### 
+**FruitStore Singleton코드**
 
 ```swift
-func bringStock(_ fruit: Fruit) -> Int {
-    guard let stock = fruitsStock[fruit] else { fatalError("과일이 없습니다.") }
+class FruitStore {
+    static let shared = FruitStore()
+    
+    // ...
+    private init() { }
+    
+    // ...
+}
+```
+    
+**JuiceMaker 코드**
 
-    return stock
+```swift
+struct JuiceMaker {
+    let fruitStore = FruitStore.shared
+
+    // ...
+}
+```
+    
+**ChangeStockViewController 코드**
+
+```swift
+class ChangeStockViewController: UIViewController {
+    // ...
+    private var fruitStore = FruitStore.shared
+
+    // ...
 }
 ```
 
@@ -197,18 +277,40 @@ func bringStock(_ fruit: Fruit) -> Int {
 
 **🧯해결방안**
 
-- `fatalError`를 사용하지 않고 `return 0`을 사용하여, 입력받은 과일이 없다면 재고를 0을 주는 방법으로 처리하였습니다.
+- delegate를 이용하여 viewController 간 데이터 전달
+
+- `ChangeStockDelegate` 프로토콜에 재고를 변경하는 기능을 가진 `changeStock` 메서드를 선언하고 `ChangeStockViewController`에 delegate, 즉 대리자를 생성 `delegate?.changeStock()`으로 접근하여 재고 데이터를 넘겨주었습니다.
+- 이후 `JuiceMakerViewController`가 `ChangeStockDelegate`를 채택하고 `ChangeStockViewController.Delegate = self`로 설정하여 재고 데이터가 있는 `ChangeStock()`에 접근 및 세부 구현을 하여 데이터를 받아올 수 있도록 구현하였습니다. 
 
 <details>
 <summary>본문 코드 내용</summary>
 
-### 
+**ChangeStockViewController 내 Delegate 코드**
+    
+```swift
+final class ChangeStockViewController: UIViewController {
+    // ...
+    var fruitStore = FruitStore()
+    var delegate: ChangeStockDelegate?
+    
+    // ...
+    @IBAction private func tapCloseButton(_ sender: UIBarButtonItem) {
+        self.delegate?.changeStock(fruitStore: fruitStore)
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    // ...
+}   
+```
+    
+**ChangeStockDelegate 채택 코드**
 
 ```swift
-func bringStock(_ fruit: Fruit) -> Int {
-    guard let stock = fruitsStock[fruit] else { return 0 }
-        
-    return stock
+extension JuiceMakerViewController: ChangeStockDelegate {
+    func changeStock(fruitStore: FruitStore) {
+        self.juiceMaker.fruitStore = fruitStore
+        setText()
+    }
 }
 ```
     
@@ -222,11 +324,13 @@ func bringStock(_ fruit: Fruit) -> Int {
 
 ## 6. 참고 링크
 
-[Apple-pushViewController](https://developer.apple.com/documentation/uikit/uinavigationcontroller/1621887-pushviewcontroller)
-[Apple-FatalError](https://developer.apple.com/documentation/swift/fatalerror(_:file:line:))
-
-[블로그-화면전환](https://velog.io/@5n_tak/Swift-ViewController-%ED%99%94%EB%A9%B4%EC%A0%84%ED%99%98-%EB%B0%A9%EB%B2%95)
-[블로그-FatalError](https://gwangyonglee.tistory.com/52)
+- [🍎 Apple-tag](https://developer.apple.com/documentation/uikit/uiview/1622493-tag)
+- [🍎 Apple-UIStepper](https://developer.apple.com/documentation/uikit/uistepper)
+- [📚 Swift-protocols](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/protocols/)
+- [📚 Swift-extensions](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/extensions)
+- [🗒️ blog-delegate](https://velog.io/@kerri/iOS-Swift-Delegate%EB%A1%9C-ViewController-%EA%B0%84%EC%97%90-data-%EC%A0%84%EB%8B%AC%ED%95%98%EA%B8%B0-modal-dismiss-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
+- [🗒️ blog-NotificationCenter](https://silver-g-0114.tistory.com/106)
+- [🗒️ blog-Singleton](https://didu-story.tistory.com/405)
 
 ---
 
