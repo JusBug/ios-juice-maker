@@ -17,7 +17,15 @@ final class JuiceMakerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(didReceiveNotification(_:)), name: Notification.Name.didChangeStockNotification, object: nil)
 
+        setText()
+    }
+    
+    @objc func didReceiveNotification(_ notification: Notification) {
+        guard let fruitstore = notification.userInfo?["fruitStroe"] as? FruitStore else { return }
+        self.juiceMaker.fruitStore = fruitstore
+        
         setText()
     }
     
@@ -62,7 +70,6 @@ final class JuiceMakerViewController: UIViewController {
             return
         }
         pushViewController.fruitStore = juiceMaker.fruitStore
-        pushViewController.delegate = self
         self.navigationController?.pushViewController(pushViewController, animated: true)
     }
     
@@ -77,12 +84,5 @@ final class JuiceMakerViewController: UIViewController {
             self.pushChangeStockViewController()
         })
         present(alertMessage, animated: true)
-    }
-}
-
-extension JuiceMakerViewController: ChangeStockDelegate {
-    func changeStock(fruitStore: FruitStore) {
-        self.juiceMaker.fruitStore = fruitStore
-        setText()
     }
 }

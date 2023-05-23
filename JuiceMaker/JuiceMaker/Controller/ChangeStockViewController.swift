@@ -10,7 +10,6 @@ import UIKit
 final class ChangeStockViewController: UIViewController {
     static let id = "ChangeStockViewControllerID"
     var fruitStore = FruitStore()
-    var delegate: ChangeStockDelegate?
     
     @IBOutlet private weak var strawberryStockLabel: UILabel!
     @IBOutlet private weak var bananaStockLabel: UILabel!
@@ -26,7 +25,6 @@ final class ChangeStockViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.navigationItem.hidesBackButton = true
         
         setText()
@@ -35,8 +33,9 @@ final class ChangeStockViewController: UIViewController {
     }
     
     @IBAction private func tapCloseButton(_ sender: UIBarButtonItem) {
-        self.delegate?.changeStock(fruitStore: fruitStore)
         self.navigationController?.popViewController(animated: true)
+        let userInfo: [String: FruitStore] = ["fruitStore": fruitStore]
+        NotificationCenter.default.post(name: Notification.Name.didChangeStockNotification, object: nil, userInfo: userInfo)
     }
     
     @IBAction private func changeStockStepper(_ sender: UIStepper) {
