@@ -7,6 +7,10 @@
 
 import UIKit
 
+enum UserInfo {
+    case fruitStore
+}
+
 final class ChangeStockViewController: UIViewController {
     static let id = "ChangeStockViewControllerID"
     var fruitStore = FruitStore()
@@ -33,9 +37,9 @@ final class ChangeStockViewController: UIViewController {
     }
     
     @IBAction private func tapCloseButton(_ sender: UIBarButtonItem) {
-        self.navigationController?.popViewController(animated: true)
-        let userInfo: [String: FruitStore] = ["fruitStore": fruitStore]
+        let userInfo: [UserInfo: FruitStore] = [UserInfo.fruitStore: fruitStore]
         NotificationCenter.default.post(name: Notification.Name.didChangeStockNotification, object: nil, userInfo: userInfo)
+        self.navigationController?.popViewController(animated: true)
     }
     
     @IBAction private func changeStockStepper(_ sender: UIStepper) {

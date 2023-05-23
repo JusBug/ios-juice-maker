@@ -17,15 +17,8 @@ final class JuiceMakerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(didReceiveNotification(_:)), name: Notification.Name.didChangeStockNotification, object: nil)
-
-        setText()
-    }
-    
-    @objc func didReceiveNotification(_ notification: Notification) {
-        guard let fruitstore = notification.userInfo?["fruitStroe"] as? FruitStore else { return }
-        self.juiceMaker.fruitStore = fruitstore
         
+        addObserver()
         setText()
     }
     
@@ -71,6 +64,17 @@ final class JuiceMakerViewController: UIViewController {
         }
         pushViewController.fruitStore = juiceMaker.fruitStore
         self.navigationController?.pushViewController(pushViewController, animated: true)
+    }
+    
+    private func addObserver() {
+        NotificationCenter.default.addObserver(self, selector: #selector(didReceiveNotification(_:)), name: Notification.Name.didChangeStockNotification, object: nil)
+    }
+    
+    @objc private func didReceiveNotification(_ notification: Notification) {
+        guard let fruitstore = notification.userInfo?[UserInfo.fruitStore] as? FruitStore else { return }
+        self.juiceMaker.fruitStore = fruitstore
+        
+        setText()
     }
     
     private func popUpSuccessAlert(_ juice: Juice) {
