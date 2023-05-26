@@ -7,7 +7,7 @@
 ## 목차
 
 1. [팀원](#1.)
-2. [순서도](#2.)
+2. [시각화된 프로젝트 구조](#2.)
 3. [타임라인](#3.)
 4. [실행 화면(기능 설명)](#4.)
 5. [트러블 슈팅](#5.)
@@ -32,13 +32,24 @@
 
 </br>
 
-## 2. 순서도
+## 2. 시각화된 프로젝트 구조
+
+### 순서도
 
 <details>
-<summary>추후 추가 예정</summary>
-
-![](https://hackmd.io/_uploads/SJPYz19r3.png)
+<summary>펼쳐보기</summary>
+<Img src = "https://hackmd.io/_uploads/SJPYz19r3.png" width="800"/>
     
+</details>
+
+</br>
+
+### UML
+
+<details>
+<summary>펼쳐보기</summary>
+<Img src = "https://github.com/JusBug/ios-juice-maker/assets/109963294/f9d8b185-1780-48ca-af5b-91a29afb5355" width="800"/>
+
 </details>
 
 </br>
@@ -116,6 +127,8 @@
 | <Img src = "https://hackmd.io/_uploads/Hkhje19Hn.gif" width="600"/> |
 
 </br>
+
+---
 
 <a id="5."></a>
 
