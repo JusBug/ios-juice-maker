@@ -84,11 +84,13 @@
 
 ### **2023.05.18.(목)**
 
-- 
+**KVO 학습**
+- KVO에 대해 학습하기 위해 `KVO-Project`를 만들어 KVO에 대해 학습
 
 ### **2023.05.19.(금)**
 
-- 
+- JuiceMaker 프로젝트 복습
+- README 작성
 
 ---
 
@@ -323,6 +325,85 @@ extension JuiceMakerViewController: ChangeStockDelegate {
     func changeStock(fruitStore: FruitStore) {
         self.juiceMaker.fruitStore = fruitStore
         setText()
+    }
+}
+```
+    
+</details>
+
+</br>
+
+### 의존성
+
+**🔥문제점**
+
+- `JuiceMaker` 타입이 가지고 있는 `fruitStore`라는 프로퍼티를 은닉화하지 않고 직접 접근하여 사용하여 의존성이 높아지는 문제가 발생했습니다.
+
+<details>
+<summary>본문 코드 내용</summary>
+
+**JuiceMaker**
+
+```swift
+struct JuiceMaker {
+    var fruitStore = FruitStore()
+    
+    // ...
+}
+```
+
+**JuiceMakerViewController**
+
+```swift
+final class JuiceMakerViewController: UIViewController {
+    private var juiceMaker = JuiceMaker()
+
+    // ...
+    private func setText() {
+        strawberryStockLabel.text = String(juiceMaker.fruitStore.bringStock(.strawberry))
+        bananaStockLabel.text = String(juiceMaker.fruitStore.bringStock(.banana))
+        pineappleStockLabel.text = String(juiceMaker.fruitStore.bringStock(.pineapple))
+        kiwiStockLabel.text = String(juiceMaker.fruitStore.bringStock(.kiwi))
+        mangoStockLabel.text = String(juiceMaker.fruitStore.bringStock(.mango))
+    }
+ 
+    // ...
+}
+```
+
+</details>
+
+</br>
+
+**🧯해결방안**
+
+- `JuiceMaker` 프로퍼티인 `fruitStore`를 private으로 은닉화하고 메서드를 추가하여 프로퍼티에 간접적으로 접근하는 방식으로 수정하였습니다.
+
+<details>
+<summary>본문 코드 내용</summary>
+    
+```swift
+struct JuiceMaker {
+    private var fruitStore = FruitStore()
+    
+    mutating func makeJuice(_ juice: Juice) throws {
+        let ingredient = juice.ingredients
+        
+        for (fruit, amount) in ingredient {
+            try fruitStore.useFruits(amount, to: fruit)
+        }
+    }
+    
+    func bringStock(_ fruit: Fruit) -> Int {
+        return fruitStore.bringStock(fruit)
+    }
+    
+    func bringFruitStore() -> FruitStore {
+        return fruitStore
+    }
+    
+    mutating func update(_ fruitStore: FruitStore) {
+        self.fruitStore = fruitStore
     }
 }
 ```
